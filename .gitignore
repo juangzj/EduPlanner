@@ -1,0 +1,33 @@
+# Entorno virtual
+.venv/
+venv/
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Archivos de configuración locales
+*.env
+.env
+
+# Archivos de logs
+*.log
+
+# Archivos de base de datos local
+db.sqlite3
+
+# Archivos de compilación
+build/
+dist/
+*.egg-info/
+
+# Archivos de Django específicos
+staticfiles/
+media/
+
+# Archivos de IDEs
+.vscode/
+.idea/

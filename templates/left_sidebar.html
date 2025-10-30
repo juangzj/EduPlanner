@@ -1,0 +1,64 @@
+<!-- Sidebar fijo en pantallas grandes -->
+<div class="d-flex flex-column flex-shrink-0 bg-dark text-white p-3 vh-100 position-fixed d-none d-lg-block"
+  style="width: 250px;" id="sidebar">
+  <!-- Logo y título -->
+  <div class="mb-4 text-center">
+    <img src="" alt="Logo Eduplanner" class="img-fluid rounded mb-2" style="max-width:80px;">
+    <h4 class="mb-0">Eduplanner</h4>
+    <small class="text-secondary">Plataforma Docente</small>
+  </div>
+
+  <hr class="border-secondary">
+
+  <!-- Links de navegación -->
+  <nav class="nav flex-column">
+    <a href="#" class="nav-link text-white">🏠 Inicio</a>
+    <a href="#" class="nav-link text-white">📘 Asistente pedagógico</a>
+    <a href="#" class="nav-link text-white">💬 Foro de recursos</a>
+    <a href="#" class="nav-link text-white">📚 Mi biblioteca</a>
+    <a href="#" class="nav-link text-white">⚙️ Configuración</a>
+  </nav>
+
+  <hr class="border-secondary mt-auto">
+
+  <!-- Footer -->
+  <div class="text-center mt-3">
+    <small class="text-secondary">© 2025 Eduplanner</small>
+  </div>
+</div>
+
+<!-- Botón hamburguesa en móviles -->
+<button class="btn btn-dark d-lg-none position-fixed top-0 start-0 m-3 rounded-circle shadow" type="button"
+  data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" id="menuToggle">
+  ☰
+</button>
+
+<!-- Sidebar Offcanvas (para móviles) -->
+<div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasSidebar">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Eduplanner</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <nav class="nav flex-column">
+      <a href="#" class="nav-link text-white">🏠 Inicio</a>
+      <a href="#" class="nav-link text-white">📘 Asistente pedagógico</a>
+      <a href="#" class="nav-link text-white">💬 Foro de recursos</a>
+      <a href="#" class="nav-link text-white">📚 Mi biblioteca</a>
+      <a href="#" class="nav-link text-white">⚙️ Configuración</a>
+    </nav>
+  </div>
+</div>
+
+<style>
+  /* Botón hamburguesa siempre visible encima de todo */
+  #menuToggle {
+    z-index: 2000;
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>

@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %} Registrar Usuario {% endblock %}
+
+{% block content %}
+{% include "navbar.html" %}
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="text-center mb-4">Registro de Usuario</h2>
+
+          <form method="post">
+            {% csrf_token %}
+
+            <!-- Gmail -->
+            <div class="mb-3">
+              <label for="id_gmail" class="form-label">Gmail</label>
+              {% if form.gmail.errors %}
+              {{ form.gmail|add_class:"form-control is-invalid" }}
+              {% else %}
+              {{ form.gmail|add_class:"form-control" }}
+              {% endif %}
+              {% for error in form.gmail.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Primer nombre -->
+            <div class="mb-3">
+              <label for="id_primer_nombre" class="form-label">Primer nombre</label>
+              {% if form.primer_nombre.errors %}
+              {{ form.primer_nombre|add_class:"form-control is-invalid" }}
+              {% else %}
+              {{ form.primer_nombre|add_class:"form-control" }}
+              {% endif %}
+              {% for error in form.primer_nombre.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Repite igual para los demás campos -->
+            <div class="mb-3">
+              <label for="id_segundo_nombre" class="form-label">Segundo nombre</label>
+              {% if form.segundo_nombre.errors %}
+              {{ form.segundo_nombre|add_class:"form-control is-invalid" }}
+              {% else %}
+              {{ form.segundo_nombre|add_class:"form-control" }}
+              {% endif %}
+              {% for error in form.segundo_nombre.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label for="id_primer_apellido" class="form-label">Primer apellido</label>
+              {% if form.primer_apellido.errors %}
+              {{ form.primer_apellido|add_class:"form-control is-invalid" }}
+              {% else %}
+              {{ form.primer_apellido|add_class:"form-control" }}
+              {% endif %}
+              {% for error in form.primer_apellido.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label for="id_segundo_apellido" class="form-label">Segundo apellido</label>
+              {% if form.segundo_apellido.errors %}
+              {{ form.segundo_apellido|add_class:"form-control is-invalid" }}
+              {% else %}
+              {{ form.segundo_apellido|add_class:"form-control" }}
+              {% endif %}
+              {% for error in form.segundo_apellido.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label for="id_apodo" class="form-label">Apodo</label>
+              {% if form.apodo.errors %}
+              {{ form.apodo|add_class:"form-control is-invalid" }}
+              {% else %}
+              {{ form.apodo|add_class:"form-control" }}
+              {% endif %}
+              {% for error in form.apodo.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label for="id_fecha_nacimiento" class="form-label">Fecha nacimiento</label>
+              {% if form.fecha_nacimiento.errors %}
+              {{ form.fecha_nacimiento|add_class:"form-control is-invalid"|attr:"type:date" }}
+              {% else %}
+              {{ form.fecha_nacimiento|add_class:"form-control"|attr:"type:date" }}
+              {% endif %}
+              {% for error in form.fecha_nacimiento.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label for="id_password1" class="form-label">Contraseña</label>
+              {% if form.password1.errors %}
+              {{ form.password1|add_class:"form-control is-invalid" }}
+              {% else %}
+              {{ form.password1|add_class:"form-control" }}
+              {% endif %}
+              {% for error in form.password1.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label for="id_password2" class="form-label">Confirmar contraseña</label>
+              {% if form.password2.errors %}
+              {{ form.password2|add_class:"form-control is-invalid" }}
+              {% else %}
+              {{ form.password2|add_class:"form-control" }}
+              {% endif %}
+              {% for error in form.password2.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
