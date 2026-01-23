@@ -1,1 +1,1 @@
-from .usuarioModel import UsuarioPersonalizado
+from .usuarioModel import UsuarioDocente

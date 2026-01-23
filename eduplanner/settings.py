@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "widget_tweaks",
     "usuario",
+    "planeaciones_de_clases",
 ]
 
 MIDDLEWARE = [
@@ -128,7 +129,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 AUTH_USER_MODEL = (
-    "usuario.UsuarioPersonalizado"  # Copnfiguracion del modelo de usaurio personalizado
+    "usuario.UsuarioDocente"  # Copnfiguracion del modelo de usaurio personalizado
 )
 
 from django.contrib.messages import constants as messages

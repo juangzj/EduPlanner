@@ -5,46 +5,43 @@ from django.contrib.auth.models import (
     BaseUserManager,
 )
 
-
 # ------------------- MANAGER -------------------
-class UsuarioManager(BaseUserManager):
+class UsuarioDocenteManager(BaseUserManager):
     """
-    Manager que define cómo se crean usuarios normales y superusuarios.
-    Sobrescribe el comportamiento de create_user y create_superuser.
+    Manager que define cómo se crean los docentes (usuarios normales) 
+    y superusuarios usando el gmail como identificador.
     """
 
     def create_user(self, gmail, password=None, **extra_fields):
-        """
-        Crea y guarda un usuario con gmail como identificador único.
-        """
         if not gmail:
             raise ValueError("El usuario debe tener un gmail")
 
-        # Normaliza el correo (todo en minúsculas)
         gmail = self.normalize_email(gmail)
-        usuario = self.model(gmail=gmail, **extra_fields)
-        usuario.set_password(password)  # Encripta la contraseña
-        usuario.save(using=self._db)
-        return usuario
+        user = self.model(gmail=gmail, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
     def create_superuser(self, gmail, password=None, **extra_fields):
-        """
-        Crea y guarda un superusuario con permisos de administrador.
-        """
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("El superusuario debe tener is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("El superusuario debe tener is_superuser=True.")
 
         return self.create_user(gmail, password, **extra_fields)
 
 
 # ------------------- MODELO -------------------
-class UsuarioPersonalizado(AbstractBaseUser, PermissionsMixin):
+class UsuarioDocente(AbstractBaseUser, PermissionsMixin):
     """
-    Modelo de usuario personalizado.
-    Reemplaza el User por defecto de Django para usar gmail como login.
+    Modelo de usuario personalizado para Docentes.
+    Usa 'gmail' como identificador único de inicio de sesión.
     """
 
-    gmail = models.EmailField(unique=True)  # Este será el identificador de login
+    gmail = models.EmailField(unique=True, verbose_name="Correo Electrónico (Gmail)")
 
     # Campos personales
     primer_nombre = models.CharField(max_length=100)
@@ -54,19 +51,21 @@ class UsuarioPersonalizado(AbstractBaseUser, PermissionsMixin):
     apodo = models.CharField(max_length=50, blank=True, null=True)
     fecha_nacimiento = models.DateField()
 
-    # Campos de control para permisos
-    is_active = models.BooleanField(default=True)  # Si el usuario está activo
-    is_staff = models.BooleanField(default=False)  # Si puede entrar al admin
+    # Campos de estado y permisos
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
-    # Vinculamos con nuestro manager
-    objects = UsuarioManager()
+    # Vinculamos con el nuevo manager
+    objects = UsuarioDocenteManager()
 
-    # Sobrescribimos el identificador único → ahora es gmail
+    # Configuración de Login
     USERNAME_FIELD = "gmail"
+    # Campos obligatorios al crear por consola (createsuperuser)
     REQUIRED_FIELDS = ["primer_nombre", "primer_apellido", "fecha_nacimiento"]
 
+    class Meta:
+        verbose_name = "Usuario Docente"
+        verbose_name_plural = "Usuarios Docentes"
+
     def __str__(self):
-        """
-        Representación legible del usuario.
-        """
         return f"{self.primer_nombre} {self.primer_apellido} ({self.gmail})"

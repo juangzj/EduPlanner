@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from usuario.models import UsuarioPersonalizado
+from usuario.models import UsuarioDocente
 
 
 # ------------------- FORMULARIO DE REGISTRO -------------------
@@ -11,7 +11,7 @@ class RegistroForm(forms.ModelForm):
     )
 
     class Meta:
-        model = UsuarioPersonalizado
+        model = UsuarioDocente
         fields = [
             "gmail",
             "primer_nombre",

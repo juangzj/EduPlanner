@@ -1,0 +1,3 @@
+from .planeacionClaseGaideUrls import urlpatterns as planeacion_clase_gaide_urls 
+
+urlpatterns = planeacion_clase_gaide_urls
