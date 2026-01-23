@@ -1,64 +1,82 @@
-<!-- Sidebar fijo en pantallas grandes -->
 <div class="d-flex flex-column flex-shrink-0 bg-dark text-white p-3 vh-100 position-fixed d-none d-lg-block"
-  style="width: 250px;" id="sidebar">
-  <!-- Logo y título -->
+  style="width: 250px; z-index: 1030;" id="sidebar">
+  
   <div class="mb-4 text-center">
-    <img src="" alt="Logo Eduplanner" class="img-fluid rounded mb-2" style="max-width:80px;">
-    <h4 class="mb-0">Eduplanner</h4>
+    <h4 class="mb-0 text-primary fw-bold">Eduplanner</h4>
     <small class="text-secondary">Plataforma Docente</small>
   </div>
 
   <hr class="border-secondary">
 
-  <!-- Links de navegación -->
-  <nav class="nav flex-column">
-    <a href="#" class="nav-link text-white">🏠 Inicio</a>
-    <a href="#" class="nav-link text-white">📘 Asistente pedagógico</a>
-    <a href="#" class="nav-link text-white">💬 Foro de recursos</a>
-    <a href="#" class="nav-link text-white">📚 Mi biblioteca</a>
-    <a href="#" class="nav-link text-white">⚙️ Configuración</a>
+  <nav class="nav flex-column gap-2">
+    <a href="{% url 'principal' %}" class="nav-link text-white hover-effect">
+      <i class="bi bi-house-door me-2"></i> Inicio
+    </a>
+    <a href="{% url 'crear_planeacion_clase_gaide' %}" class="nav-link text-white hover-effect">
+      <i class="bi bi-robot me-2"></i> Asistente pedagógico
+    </a>
+    <a href="#" class="nav-link text-white hover-effect">
+      <i class="bi bi-chat-dots me-2"></i> Foro de recursos
+    </a>
+    <a href="#" class="nav-link text-white hover-effect">
+      <i class="bi bi-bookmarks me-2"></i> Mi biblioteca
+    </a>
+    <a href="#" class="nav-link text-white hover-effect">
+      <i class="bi bi-gear me-2"></i> Configuración
+    </a>
   </nav>
 
   <hr class="border-secondary mt-auto">
 
-  <!-- Footer -->
-  <div class="text-center mt-3">
-    <small class="text-secondary">© 2025 Eduplanner</small>
+  <div class="text-center pb-2">
+    <small class="text-muted">© 2026 Eduplanner</small>
   </div>
 </div>
 
-<!-- Botón hamburguesa en móviles -->
-<button class="btn btn-dark d-lg-none position-fixed top-0 start-0 m-3 rounded-circle shadow" type="button"
-  data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" id="menuToggle">
-  ☰
+<button class="btn btn-primary d-lg-none position-fixed top-0 start-0 m-3 rounded-circle shadow" type="button"
+  data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" style="z-index: 2000; width: 45px; height: 45px;">
+  <i class="bi bi-list"></i>
 </button>
 
-<!-- Sidebar Offcanvas (para móviles) -->
-<div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasSidebar">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title">Eduplanner</h5>
+<div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasSidebar" style="width: 280px;">
+  <div class="offcanvas-header border-bottom border-secondary">
+    <h5 class="offcanvas-title text-primary fw-bold">Eduplanner</h5>
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
   </div>
   <div class="offcanvas-body">
-    <nav class="nav flex-column">
-      <a href="#" class="nav-link text-white">🏠 Inicio</a>
-      <a href="#" class="nav-link text-white">📘 Asistente pedagógico</a>
-      <a href="#" class="nav-link text-white">💬 Foro de recursos</a>
-      <a href="#" class="nav-link text-white">📚 Mi biblioteca</a>
-      <a href="#" class="nav-link text-white">⚙️ Configuración</a>
+    <nav class="nav flex-column gap-3">
+      <a href="{% url 'principal' %}" class="nav-link text-white fs-5">
+        <i class="bi bi-house-door me-2"></i> Inicio
+      </a>
+      <a href="{% url 'crear_planeacion_clase_gaide' %}" class="nav-link text-white fs-5">
+        <i class="bi bi-robot me-2"></i> Asistente pedagógico
+      </a>
+      <a href="#" class="nav-link text-white fs-5">
+        <i class="bi bi-chat-dots me-2"></i> Foro de recursos
+      </a>
+      <a href="#" class="nav-link text-white fs-5">
+        <i class="bi bi-bookmarks me-2"></i> Mi biblioteca
+      </a>
+      <a href="#" class="nav-link text-white fs-5">
+        <i class="bi bi-gear me-2"></i> Configuración
+      </a>
     </nav>
   </div>
 </div>
 
 <style>
-  /* Botón hamburguesa siempre visible encima de todo */
-  #menuToggle {
-    z-index: 2000;
-    width: 50px;
-    height: 50px;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  /* Efecto simple para los links */
+  .nav-link {
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    padding: 10px 15px;
+  }
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #0d6efd !important;
+  }
+  /* Iconos un poco más grandes */
+  .nav-link i {
+    font-size: 1.1rem;
   }
 </style>
