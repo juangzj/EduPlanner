@@ -125,14 +125,20 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# otras configuraciones
+# ============================================ otras configuraciones ==========================================
 
 
 AUTH_USER_MODEL = (
-    "usuario.UsuarioDocente"  # Copnfiguracion del modelo de usaurio personalizado
+    "usuario.UsuarioDocente"  # configuracion del modelo de usaurio personalizado
 )
 
+# Mensajes
 from django.contrib.messages import constants as messages
+import os
+from dotenv import load_dotenv
+
+# carga de variables del archivo .env
+load_dotenv()
 
 
 # Configuracion para los mensajes

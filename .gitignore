@@ -31,3 +31,7 @@ media/
 # Archivos de IDEs
 .vscode/
 .idea/
+
+# Archivos de configuracion locales
+*.env
+.env

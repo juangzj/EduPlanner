@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Gaide - Refinamiento{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-10">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                <h2 class="fw-bold text-primary mb-0"><i class="bi bi-stars"></i> Refinamiento de Clase</h2>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-success btn-sm" onclick="window.print()">
+                        <i class="bi bi-file-earmark-pdf"></i> Exportar
+                    </button>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4 p-md-5">
+                    
+                    {% if not planeacion.contenido_generado %}
+                        <div id="loader" class="text-center py-5">
+                            <div class="spinner-border text-primary mb-4" role="status" style="width: 3.5rem; height: 3.5rem;"></div>
+                            <h4 class="fw-bold">Gaide está procesando tu solicitud...</h4>
+                            <p class="text-muted">Organizando actividades pedagógicas para: <strong>{{ planeacion.tema }}</strong>.</p>
+                            <div class="progress mt-4 mx-auto" style="height: 6px; max-width: 400px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="metadata mb-4 p-3 bg-light rounded-3 d-flex flex-wrap gap-4">
+                            <span><strong>Grado:</strong> {{ planeacion.grado }}</span>
+                            <span><strong>Área:</strong> {{ planeacion.area }}</span>
+                            <span><strong>Tema:</strong> {{ planeacion.tema }}</span>
+                        </div>
+
+                        <div class="ia-content">
+                            {{ planeacion.contenido_generado|linebreaks }}
+                        </div>
+
+                        <div class="mt-5 pt-4 border-top">
+                            <div class="alert alert-warning border-0 shadow-sm small">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <strong>Nota:</strong> Revisa la estructura y ajusta los recursos según tu disponibilidad en el aula.
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if not planeacion.contenido_generado %}
+<script>
+    (function pollIA() {
+        // Asegúrate de que el nombre de la URL coincida con tu urls.py
+        fetch("{% url 'verificar_estado_ia' planeacion.id %}")
+            .then(res => res.json())
+            .then(data => {
+                // Si terminó (sea éxito o error), recargamos para mostrar el resultado o el mensaje de error
+                if (data.finalizado) {
+                    location.reload();
+                } else {
+                    setTimeout(pollIA, 3000); // Reintentar en 3 segundos
+                }
+            })
+            .catch(err => {
+                console.error("Error de conexión:", err);
+                setTimeout(pollIA, 5000);
+            });
+    })();
+</script>
+{% endif %}
+
+<style>
+    .ia-content { 
+        font-size: 1.1rem; 
+        line-height: 1.7; 
+        color: #333;
+        white-space: pre-wrap; /* Mantiene el formato de la IA */
+    }
+    @media print {
+        #sidebar, .btn, .progress, .spinner-border, .alert, .progress-bar { display: none !important; }
+        .main-wrapper-with-sidebar { margin-left: 0 !important; }
+        .card { border: none !important; box-shadow: none !important; }
+    }
+</style>
+{% endblock %}
