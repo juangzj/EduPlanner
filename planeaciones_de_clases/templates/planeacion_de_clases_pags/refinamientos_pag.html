@@ -1,91 +1,219 @@
 {% extends 'base.html' %}
 
-{% block title %}Gaide - Refinamiento{% endblock %}
+{% block title %}Gaide - Refinamiento y Edición{% endblock %}
 
 {% block content %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 <div class="container py-4">
     <div class="row justify-content-center">
-        <div class="col-xl-10">
+        <div class="col-xl-11">
             
             <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-                <h2 class="fw-bold text-primary mb-0"><i class="bi bi-stars"></i> Refinamiento de Clase</h2>
+                <div>
+                    <h2 class="fw-bold text-primary mb-0">
+                        <i class="bi bi-stars"></i> 
+                        {% if planeacion.planeacion_finalizada %}Planeación Finalizada{% else %}Refinamiento de Estructura{% endif %}
+                    </h2>
+                    <p class="text-muted mb-0">Tema: <strong>{{ planeacion.tema }}</strong> | Grado: <strong>{{ planeacion.grado }}</strong></p>
+                </div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-outline-success btn-sm" onclick="window.print()">
-                        <i class="bi bi-file-earmark-pdf"></i> Exportar
+                    <button class="btn btn-outline-secondary btn-sm shadow-sm" onclick="window.print()">
+                        <i class="bi bi-printer"></i> Imprimir
                     </button>
+                    {% if planeacion.planeacion_finalizada %}
+                        <a href="{% url 'principal' %}" class="btn btn-success btn-sm shadow-sm">
+                            <i class="bi bi-check-all"></i> Finalizar y Salir
+                        </a>
+                    {% endif %}
                 </div>
             </div>
 
-            <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-body p-4 p-md-5">
-                    
-                    {% if not planeacion.contenido_generado %}
-                        <div id="loader" class="text-center py-5">
-                            <div class="spinner-border text-primary mb-4" role="status" style="width: 3.5rem; height: 3.5rem;"></div>
-                            <h4 class="fw-bold">Gaide está procesando tu solicitud...</h4>
-                            <p class="text-muted">Organizando actividades pedagógicas para: <strong>{{ planeacion.tema }}</strong>.</p>
-                            <div class="progress mt-4 mx-auto" style="height: 6px; max-width: 400px;">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm border-0 rounded-4 h-100">
+                        <div class="card-body p-4 p-md-5">
+                            <div id="contenedor-contenido">
+                                {% if not planeacion.contenido_generado %}
+                                    <div id="loader" class="text-center py-5">
+                                        <div class="spinner-border text-primary mb-4" role="status" style="width: 3rem; height: 3rem;"></div>
+                                        <h4 class="fw-bold">Gaide está redactando...</h4>
+                                        <p class="text-muted">Organizando ideas pedagógicas. Esto tardará unos segundos.</p>
+                                    </div>
+                                {% else %}
+                                    <div id="ia-render-area" class="ia-content">
+                                        </div>
+                                {% endif %}
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    {% if not planeacion.planeacion_finalizada %}
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-dark text-white fw-bold py-3">
+                            <i class="bi bi-chat-right-text me-2"></i> Ajustar Estructura
+                        </div>
+                        <div class="card-body">
+                            <p class="small text-muted mb-3">Pídele a la IA que añada actividades, cambie el tono o ajuste los tiempos.</p>
+                            <form id="formRefinar">
+                                {% csrf_token %}
+                                <textarea name="observacion" id="observacion" class="form-control mb-3" rows="4" placeholder="Ej: Agrega una actividad rompehielo dinámica..."></textarea>
+                                <button type="submit" id="btnRefinar" class="btn btn-primary w-100 fw-bold shadow-sm">
+                                    <i class="bi bi-magic"></i> Aplicar Ajustes
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm border-0 rounded-4 border-start border-4 border-success bg-light">
+                        <div class="card-body">
+                            <h5 class="fw-bold text-success mb-2">¿Estructura aprobada?</h5>
+                            <p class="small text-muted">Gaide redactará la planeación completa (Inicio, Desarrollo, Cierre, Evaluación y Recursos).</p>
+                            <form id="formFinal">
+                                {% csrf_token %}
+                                <button type="submit" id="btnFinalizar" class="btn btn-success w-100 fw-bold py-2 shadow-sm">
+                                    <i class="bi bi-lightning-charge-fill"></i> GENERAR CONTENIDO FINAL
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                     {% else %}
-                        <div class="metadata mb-4 p-3 bg-light rounded-3 d-flex flex-wrap gap-4">
-                            <span><strong>Grado:</strong> {{ planeacion.grado }}</span>
-                            <span><strong>Área:</strong> {{ planeacion.area }}</span>
-                            <span><strong>Tema:</strong> {{ planeacion.tema }}</span>
-                        </div>
-
-                        <div class="ia-content">
-                            {{ planeacion.contenido_generado|linebreaks }}
-                        </div>
-
-                        <div class="mt-5 pt-4 border-top">
-                            <div class="alert alert-warning border-0 shadow-sm small">
-                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                <strong>Nota:</strong> Revisa la estructura y ajusta los recursos según tu disponibilidad en el aula.
-                            </div>
-                        </div>
+                    <div class="alert alert-success border-0 shadow-sm rounded-4">
+                        <h5 class="fw-bold"><i class="bi bi-check-circle-fill"></i> ¡Listo!</h5>
+                        <p class="small mb-0">La planeación está completa y lista para ser implementada en el aula.</p>
+                    </div>
                     {% endif %}
-
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-{% if not planeacion.contenido_generado %}
 <script>
-    (function pollIA() {
-        // Asegúrate de que el nombre de la URL coincida con tu urls.py
-        fetch("{% url 'verificar_estado_ia' planeacion.id %}")
+    // 1. Renderizador de Markdown
+    function renderizarIA() {
+        const contenedor = document.getElementById('ia-render-area');
+        if (contenedor) {
+            // Obtenemos el texto crudo de Django y lo convertimos con Marked
+            const rawText = `{{ planeacion.contenido_generado|escapejs }}`;
+            contenedor.innerHTML = marked.parse(rawText);
+        }
+    }
+
+    // 2. Polling (Verificar si la IA terminó)
+    function verificarEstado() {
+        fetch(`{% url 'verificar_estado_ia' planeacion.id %}`)
             .then(res => res.json())
             .then(data => {
-                // Si terminó (sea éxito o error), recargamos para mostrar el resultado o el mensaje de error
                 if (data.finalizado) {
-                    location.reload();
+                    location.reload(); // Recargar para mostrar el nuevo contenido
                 } else {
-                    setTimeout(pollIA, 3000); // Reintentar en 3 segundos
+                    setTimeout(verificarEstado, 3000);
                 }
-            })
-            .catch(err => {
-                console.error("Error de conexión:", err);
-                setTimeout(pollIA, 5000);
             });
-    })();
+    }
+
+    // Inicializar renderizado o polling según el estado
+    {% if not planeacion.contenido_generado %}
+        verificarEstado();
+    {% else %}
+        renderizarIA();
+    {% endif %}
+
+    // 3. Manejo de Refinamientos (AJAX)
+    document.getElementById('formRefinar')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnRefinar');
+        const obs = document.getElementById('observacion').value;
+        if(!obs) return;
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Procesando...';
+
+        fetch(window.location.href, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `observacion=${encodeURIComponent(obs)}`
+        }).then(() => {
+            document.getElementById('contenedor-contenido').innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary mb-4"></div>
+                    <h4 class="fw-bold">Ajustando estructura...</h4>
+                </div>`;
+            verificarEstado();
+        });
+    });
+
+    // 4. Manejo de Generación Final (AJAX)
+    document.getElementById('formFinal')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnFinalizar');
+        btn.disabled = true;
+        
+        fetch(`{% url 'generar_planeacion_final' planeacion.id %}`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+        }).then(() => {
+            document.getElementById('contenedor-contenido').innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-success mb-4"></div>
+                    <h4 class="fw-bold text-success">Generando planeación detallada...</h4>
+                    <p class="text-muted">Gaide está creando actividades y criterios de evaluación.</p>
+                </div>`;
+            verificarEstado();
+        });
+    });
 </script>
-{% endif %}
 
 <style>
+    /* Estilos de Documento Pedagógico */
     .ia-content { 
         font-size: 1.1rem; 
-        line-height: 1.7; 
-        color: #333;
-        white-space: pre-wrap; /* Mantiene el formato de la IA */
+        line-height: 1.8; 
+        color: #2c3e50; 
+        font-family: 'Inter', 'Segoe UI', sans-serif;
     }
+    
+    .ia-content h1, .ia-content h2, .ia-content h3 { 
+        color: #0d6efd; 
+        font-weight: 700; 
+        margin-top: 1.8rem;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 0.5rem;
+    }
+
+    .ia-content ul, .ia-content ol { margin-bottom: 1.5rem; }
+    
+    .ia-content table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin: 1.5rem 0; 
+        background: white;
+    }
+
+    .ia-content table th, .ia-content table td { 
+        border: 1px solid #dee2e6; 
+        padding: 12px; 
+    }
+
+    .ia-content table th { background-color: #f8f9fa; }
+
+    .ia-content blockquote {
+        border-left: 5px solid #0d6efd;
+        padding: 10px 20px;
+        background: #f0f7ff;
+        color: #444;
+        margin: 1.5rem 0;
+    }
+
+    /* Ajustes de impresión */
     @media print {
-        #sidebar, .btn, .progress, .spinner-border, .alert, .progress-bar { display: none !important; }
-        .main-wrapper-with-sidebar { margin-left: 0 !important; }
+        .col-lg-4, .btn, .bi-stars, .border-bottom { display: none !important; }
+        .col-lg-8 { width: 100% !important; }
         .card { border: none !important; box-shadow: none !important; }
+        .ia-content h1, .ia-content h2 { color: black !important; }
     }
 </style>
 {% endblock %}
