@@ -4,7 +4,6 @@ from ..models.planeacionClaseGaide import PlaneacionClaseGaide
 class CreacionEstructuraPlaneacionClaseGaideForm(forms.ModelForm):
     class Meta:
         model = PlaneacionClaseGaide
-        # Actualizamos los campos según tu nueva lista
         fields = [
             'grado', 
             'area', 
@@ -16,10 +15,10 @@ class CreacionEstructuraPlaneacionClaseGaideForm(forms.ModelForm):
             'informacion_adicional'
         ]
         
-        # Widgets para aplicar estilos de Bootstrap y placeholders
+        # Widgets actualizados para soportar los campos seleccionables
         widgets = {
-            'grado': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 5to de Primaria'}),
-            'area': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Ciencias Naturales'}),
+            'grado': forms.Select(attrs={'class': 'form-select'}),
+            'area': forms.Select(attrs={'class': 'form-select'}),
             'tema': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: La Célula'}),
             'competencia': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': '¿Qué competencia desarrollarán?'}),
             'objetivo_aprendizaje': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': '¿Qué aprenderá el estudiante?'}),
@@ -28,7 +27,6 @@ class CreacionEstructuraPlaneacionClaseGaideForm(forms.ModelForm):
             'informacion_adicional': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Contexto extra del grupo o recursos...'}),
         }
         
-        # Etiquetas más amigables (Labels)
         labels = {
             'grado': 'Grado Académico',
             'area': 'Área de Conocimiento',
