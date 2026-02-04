@@ -1,1 +1,1 @@
-from ..models import likePlaneacion, comentarioPLaneacion
+from ..models import likePlaneacion, comentarioPlaneacion

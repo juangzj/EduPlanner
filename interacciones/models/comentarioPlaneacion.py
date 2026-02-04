@@ -4,7 +4,7 @@ from django.conf import settings
 
 class ComentarioPlaneacion(models.Model):
     planeacion = models.ForeignKey(
-        "PlaneacionClaseGaide",
+        "planeaciones_de_clases.PlaneacionClaseGaide",
         on_delete=models.CASCADE,
         related_name="comentarios"
     )
@@ -25,5 +25,8 @@ class ComentarioPlaneacion(models.Model):
     class Meta:
         db_table = "comentarios_planeacion"
         indexes = [
-            models.Index(fields=["planeacion"], name="idx_comentarios_planeacion"),
+            models.Index(
+                fields=["planeacion"],
+                name="idx_comentarios_planeacion"
+            ),
         ]

@@ -3,13 +3,21 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from ..models.planeacionClaseGaide import PlaneacionClaseGaide
 from ..forms.planeacionGaideForms import CreacionEstructuraPlaneacionClaseGaideForm
+from ..filtros.planeacionClaseGaideBibliotecaFiltro import PlaneacionClaseGaideBibliotecaFiltro
 
 # --- READ: Ver lista de planeaciones ---
 @login_required
 def biblioteca_view(request):
-    planeaciones = PlaneacionClaseGaide.objects.filter(autor=request.user).order_by('-fecha_creacion')
+    # 1. Obtenemos el queryset base (solo las del autor)
+    queryset_base = PlaneacionClaseGaide.objects.filter(autor=request.user).order_by('-fecha_creacion')
+    
+    # 2. Inicializamos el filtro con los datos de la URL (request.GET) y el queryset
+    filtro = PlaneacionClaseGaideBibliotecaFiltro(request.GET, queryset=queryset_base)
+    
+    # 3. El queryset filtrado está en filtro.qs
     return render(request, 'planeacion_de_clases_pags/biblioteca.html', {
-        'planeaciones': planeaciones
+        'planeaciones': filtro.qs, # Pasamos los resultados filtrados
+        'filter': filtro           # Pasamos el objeto filtro para renderizar el formulario
     })
 
 # --- UPDATE: Editar metadatos ---

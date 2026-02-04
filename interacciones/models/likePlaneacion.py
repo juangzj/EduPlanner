@@ -4,7 +4,7 @@ from django.conf import settings
 
 class LikePlaneacion(models.Model):
     planeacion = models.ForeignKey(
-        "PlaneacionClaseGaide",
+        "planeaciones_de_clases.PlaneacionClaseGaide",
         on_delete=models.CASCADE,
         related_name="likes"
     )

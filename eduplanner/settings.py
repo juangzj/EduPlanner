@@ -38,8 +38,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "widget_tweaks",
+    "django_filters",
     "usuario",
     "planeaciones_de_clases",
+    "interacciones",
+    
 ]
 
 MIDDLEWARE = [
