@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Foro de Recursos Pedagógicos</h1>
+    <hr>
+
+    <div class="row">
+        {% for planeacion in planeaciones %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <span class="badge bg-light text-primary">{{ planeacion.get_grado_display }}</span>
+                        <strong>{{ planeacion.area }}</strong>
+                    </div>
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ planeacion.tema }}</h5>
+                        <p class="card-text text-muted">
+                            <small>Por: {{ planeacion.autor.primer_nombre }} {{ planeacion.autor.primer_apellido }}</small>
+                        </p>
+                        <p class="card-text">
+                            {{ planeacion.objetivo_aprendizaje|truncatechars:100 }}
+                        </p>
+                    </div>
+
+                    <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between align-items-center">
+                        <div>
+                            <button class="btn btn-sm btn-outline-danger">
+                                ❤️ {{ planeacion.total_likes }}
+                            </button>
+                            
+                            <a href="#" class="btn btn-sm btn-outline-secondary">
+                                💬 {{ planeacion.total_comentarios }}
+                            </a>
+                        </div>
+                        
+                        <a href="#" class="btn btn-sm btn-primary">Ver Recurso</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center">
+                <p class="alert alert-info">Aún no hay planeaciones publicadas en el foro.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
