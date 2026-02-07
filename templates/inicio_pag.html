@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load widget_tweaks %}
 
-{% block title %} Inicio - Eduplanner {% endblock %}
+{% block title %} Inicio - EduPlanner {% endblock %}
 
 {% block content %}
-<section class="bg-white text-center py-5 shadow-sm rounded-3 mb-4">
+<section class="bg-white text-center py-5 shadow-sm rounded-4 mb-4 border-bottom border-primary border-3">
   <div class="container">
-    <h1 class="fw-bold display-5 mb-3">¡Bienvenido a <span class="text-primary">Eduplanner</span>!</h1>
+    <h1 class="fw-bold display-5 mb-3">¡Bienvenido a <span class="text-primary">EduPlanner</span>!</h1>
     <p class="lead text-muted">
       Tu plataforma integral para la <strong>planificación educativa</strong> y la <strong>colaboración docente</strong>.
     </p>
@@ -16,50 +16,56 @@
 <section class="pb-5">
   <div class="row text-center g-4">
     <div class="col-md-4">
-      <div class="card border-0 shadow-sm p-4 h-100">
-        <h1 class="fw-bold text-primary">1,247</h1>
-        <p class="text-muted mb-0 small uppercase fw-bold">Planeaciones generadas</p>
+      <div class="card border-0 shadow-sm p-4 h-100 rounded-4 transition-hover">
+        <h1 class="fw-bold text-primary">{{ total_planeaciones|default:"0" }}</h1>
+        <p class="text-muted mb-0 small text-uppercase fw-bold">Planeaciones generadas</p>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card border-0 shadow-sm p-4 h-100">
-        <h1 class="fw-bold text-success">398</h1>
-        <p class="text-muted mb-0 small uppercase fw-bold">Docentes activos</p>
+      <div class="card border-0 shadow-sm p-4 h-100 rounded-4 transition-hover">
+        <h1 class="fw-bold text-success">{{ total_docentes|default:"0" }}</h1>
+        <p class="text-muted mb-0 small text-uppercase fw-bold">Docentes activos</p>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card border-0 shadow-sm p-4 h-100">
-        <h1 class="fw-bold text-warning">156</h1>
-        <p class="text-muted mb-0 small uppercase fw-bold">Recursos compartidos</p>
+      <div class="card border-0 shadow-sm p-4 h-100 rounded-4 transition-hover">
+        <h1 class="fw-bold text-warning">{{ total_compartidos|default:"0" }}</h1>
+        <p class="text-muted mb-0 small text-uppercase fw-bold">Recursos compartidos</p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="py-5 bg-white rounded-3 shadow-sm mb-4">
+<section class="py-5 bg-white rounded-4 shadow-sm mb-4">
   <div class="container">
     <h2 class="fw-bold text-center mb-5">Explora nuestras herramientas</h2>
     <div class="row g-4 text-center">
       <div class="col-md-4">
-        <div class="card border-0 bg-light p-4 h-100 hover-zoom">
-          <div class="mb-3 fs-1">🤖</div>
-          <h4 class="fw-bold">Asistente IA</h4>
-          <p class="text-muted small">Genera planeaciones personalizadas con inteligencia artificial.</p>
-        </div>
+        <a href="{% url 'crear_planeacion_clase_gaide' %}" class="text-decoration-none text-dark">
+          <div class="card border-0 bg-light p-4 h-100 hover-zoom rounded-4">
+            <div class="mb-3 fs-1">🤖</div>
+            <h4 class="fw-bold">Asistente IA</h4>
+            <p class="text-muted small">Genera planeaciones personalizadas con inteligencia artificial.</p>
+          </div>
+        </a>
       </div>
       <div class="col-md-4">
-        <div class="card border-0 bg-light p-4 h-100 hover-zoom">
-          <div class="mb-3 fs-1">💬</div>
-          <h4 class="fw-bold">Foro Colaborativo</h4>
-          <p class="text-muted small">Comparte recursos y aprende de otros docentes.</p>
-        </div>
+        <a href="{% url 'foro_recursos' %}" class="text-decoration-none text-dark">
+          <div class="card border-0 bg-light p-4 h-100 hover-zoom rounded-4">
+            <div class="mb-3 fs-1">💬</div>
+            <h4 class="fw-bold">Foro Colaborativo</h4>
+            <p class="text-muted small">Comparte recursos y aprende de otros docentes.</p>
+          </div>
+        </a>
       </div>
       <div class="col-md-4">
-        <div class="card border-0 bg-light p-4 h-100 hover-zoom">
-          <div class="mb-3 fs-1">📚</div>
-          <h4 class="fw-bold">Mi Biblioteca</h4>
-          <p class="text-muted small">Organiza y accede a tus recursos favoritos.</p>
-        </div>
+        <a href="{% url 'biblioteca'%}" class="text-decoration-none text-dark">
+          <div class="card border-0 bg-light p-4 h-100 hover-zoom rounded-4">
+            <div class="mb-3 fs-1">📚</div>
+            <h4 class="fw-bold">Mi Biblioteca</h4>
+            <p class="text-muted small">Organiza y accede a tus recursos favoritos.</p>
+          </div>
+        </a>
       </div>
     </div>
   </div>
@@ -68,58 +74,63 @@
 <section class="py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="fw-bold h4">Recursos Populares</h3>
-    <a href="#" class="btn btn-link text-decoration-none">Ver todos →</a>
+    <a href="{% url 'foro_recursos' %}" class="btn btn-link text-decoration-none">Ver todos →</a>
   </div>
   <div class="row g-4">
+    {% for recurso in recursos_populares %}
     <div class="col-md-4">
-      <div class="card border-0 shadow-sm p-4 h-100 border-top border-primary border-4">
-        <h5 class="fw-bold">Estrategias para enseñar fracciones</h5>
-        <p class="text-muted small mb-1">Por María Gonzales</p>
+      <div class="card border-0 shadow-sm p-4 h-100 border-top border-primary border-4 rounded-bottom-4 transition-hover">
+        <h5 class="fw-bold text-truncate">{{ recurso.tema }}</h5>
+        <p class="text-muted small mb-2">
+            <i class="bi bi-person-circle"></i> {{ recurso.autor.get_full_name|default:recurso.autor.get_username }}
+        </p>
         <div class="mb-3">
-            <span class="badge bg-primary-subtle text-primary">Matemáticas</span>
+          <span class="badge bg-primary-subtle text-primary">{{ recurso.area }}</span>
+          <span class="badge bg-secondary-subtle text-secondary">{{ recurso.get_grado_display }}</span>
         </div>
-        <button class="btn btn-outline-success btn-sm mt-auto"><i class="bi bi-hand-thumbs-up"></i> Es útil</button>
+        <div class="mt-auto d-flex justify-content-between align-items-center">
+            <a href="{% url 'foro_planeacion_detalle' recurso.pk %}" class="btn btn-sm btn-primary px-3 rounded-pill">Ver detalle</a>
+            <span class="text-danger small fw-bold">
+                <i class="bi bi-heart-fill"></i> {{ recurso.num_likes }}
+            </span>
+        </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card border-0 shadow-sm p-4 h-100 border-top border-info border-4">
-        <h5 class="fw-bold">Guía para proyectos colaborativos</h5>
-        <p class="text-muted small mb-1">Por Carlos López</p>
-        <div class="mb-3">
-            <span class="badge bg-info-subtle text-info">Ciencias</span>
-        </div>
-        <button class="btn btn-outline-success btn-sm mt-auto"><i class="bi bi-hand-thumbs-up"></i> Es útil</button>
-      </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <p class="text-muted italic">Aún no hay recursos destacados para mostrar.</p>
     </div>
-    <div class="col-md-4">
-      <div class="card border-0 shadow-sm p-4 h-100 border-top border-danger border-4">
-        <h5 class="fw-bold">Ideas creativas para lectoescritura</h5>
-        <p class="text-muted small mb-1">Por Ana Torres</p>
-        <div class="mb-3">
-            <span class="badge bg-danger-subtle text-danger">Lenguaje</span>
-        </div>
-        <button class="btn btn-outline-success btn-sm mt-auto"><i class="bi bi-hand-thumbs-up"></i> Es útil</button>
-      </div>
-    </div>
+    {% endfor %}
   </div>
 </section>
 
-<section class="py-5 bg-primary bg-gradient text-white text-center rounded-3 shadow mt-4">
-  <div class="container">
+<section class="py-5 bg-primary bg-gradient text-white text-center rounded-4 shadow mt-4 position-relative overflow-hidden">
+  <div class="container position-relative" style="z-index: 2;">
     <h2 class="fw-bold mb-3">¿Listo para crear una planeación?</h2>
     <p class="lead opacity-75">Usa nuestro asistente con IA para generar planeaciones personalizadas en minutos.</p>
-    <a href="{% url 'crear_planeacion_clase_gaide' %}" class="btn btn-light btn-lg mt-3 px-5 shadow">
-        <i class="bi bi-magic"></i> Crear planeación ahora
+    <a href="{% url 'crear_planeacion_clase_gaide' %}" class="btn btn-light btn-lg mt-3 px-5 shadow-sm fw-bold text-primary rounded-pill">
+      <i class="bi bi-magic me-2"></i> Crear planeación ahora
     </a>
   </div>
+  <i class="bi bi-lightning-charge position-absolute end-0 bottom-0 p-3 opacity-25" style="font-size: 10rem; transform: rotate(-15deg);"></i>
 </section>
 
 <style>
-    .hover-zoom {
-        transition: transform 0.3s ease;
-    }
-    .hover-zoom:hover {
-        transform: translateY(-5px);
-    }
+  .hover-zoom {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+  .hover-zoom:hover {
+    transform: translateY(-8px);
+    background-color: #f0f4f8 !important;
+  }
+  .transition-hover {
+    transition: all 0.3s ease;
+  }
+  .transition-hover:hover {
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
+  }
+  .rounded-4 {
+      border-radius: 1rem !important;
+  }
 </style>
 {% endblock %}

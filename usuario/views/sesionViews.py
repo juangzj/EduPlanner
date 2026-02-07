@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from ..forms.acceso_form import FormularioAcceso
+from planeaciones_de_clases.models import PlaneacionClaseGaide
+from django.db.models import Count
 
 
 def inicio_de_sesion(request):
@@ -30,4 +32,28 @@ def inicio_de_sesion(request):
 # Panel principal
 @login_required
 def pagina_inicio_view(request):
-    return render(request, "inicio_pag.html")
+    # 1. ESTADÍSTICAS GENERALES
+    # Total de planeaciones creadas en la plataforma
+    total_planeaciones = PlaneacionClaseGaide.objects.count()
+    
+    # Total de docentes únicos que han interactuado (usando el campo autor)
+    total_docentes = PlaneacionClaseGaide.objects.values('autor').distinct().count()
+    
+    # Total de recursos que los docentes han decidido publicar en el foro
+    total_compartidos = PlaneacionClaseGaide.objects.filter(publicada=True).count()
+
+    # 2. RECURSOS POPULARES
+    # Traemos las 3 planeaciones publicadas que tengan más likes.
+    # Usamos 'annotate' para contar los likes de cada planeación en una sola consulta.
+    recursos_populares = PlaneacionClaseGaide.objects.filter(publicada=True)\
+        .annotate(num_likes=Count('likes'))\
+        .order_by('-num_likes', '-fecha_creacion')[:3]
+
+    context = {
+        'total_planeaciones': total_planeaciones,
+        'total_docentes': total_docentes,
+        'total_compartidos': total_compartidos,
+        'recursos_populares': recursos_populares,
+    }
+    
+    return render(request, "inicio_pag.html", context)
