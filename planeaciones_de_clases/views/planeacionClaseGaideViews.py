@@ -4,116 +4,174 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 
-# Importaciones del proyecto
 from ..models.planeacionClaseGaide import PlaneacionClaseGaide
 from ..forms.planeacionGaideForms import CreacionEstructuraPlaneacionClaseGaideForm
-from ..services.ia_services import GaideIAService  
+from ..services.ia_services import GaideIAService
 
-# Instanciamos el servicio a nivel de módulo o dentro de la vista
+
 ia_service = GaideIAService()
 
-@login_required 
+
+@login_required
 def crear_planeacion_clase_gaide(request):
     """
-    Paso 1: Captura metadatos y lanza la generación de la estructura inicial.
+    Paso 1: Captura metadatos y genera la estructura inicial
     """
     if request.method == 'POST':
         form = CreacionEstructuraPlaneacionClaseGaideForm(request.POST)
         if form.is_valid():
             planeacion = form.save(commit=False)
             planeacion.autor = request.user
-            planeacion.save() 
+            planeacion.save()
 
-            # Construimos el prompt inicial profesional
-            prompt_inicial = (
-                f"Genera una estructura de clase para el grado {planeacion.grado}. "
-                f"Área: {planeacion.area}. Tema: {planeacion.tema}. "
-                f"Objetivo: {planeacion.objetivo_aprendizaje}. Competencia: {planeacion.competencia}. "
-                f"Información adicional: {planeacion.informacion_adicional or 'N/A'}"
+            threading.Thread(
+                target=ia_service.procesar_flujo,
+                args=(planeacion.id, "", "estructura")
+            ).start()
+
+            messages.success(
+                request,
+                "Gaide está generando la estructura de tu clase. Espera un momento."
             )
 
-            # Ejecución asíncrona mediante hilos
-            thread = threading.Thread(
-                target=ia_service.procesar_flujo, 
-                args=(planeacion.id, prompt_inicial, "estructura")
-            )
-            thread.start()
-
-            messages.success(request, "¡Gaide está diseñando la estructura de tu clase! Por favor, espera.")
-            return redirect('refinamientos_view', pk=planeacion.id) 
+            return redirect('refinamientos_view', pk=planeacion.id)
     else:
         form = CreacionEstructuraPlaneacionClaseGaideForm()
 
-    return render(request, 'planeacion_de_clases_pags/formulario_creacion_estructura_clase_gaide.html', {'form': form})
+    return render(
+        request,
+        'planeacion_de_clases_pags/formulario_creacion_estructura_clase_gaide.html',
+        {'form': form}
+    )
 
 @login_required
 def refinamientos_view(request, pk):
     """
-    Paso 2: Panel de interacción. Permite ver la estructura y solicitar cambios.
+    Paso 2: Ver estructura y solicitar refinamientos
     """
-    # Siempre filtramos por autor para que nadie vea planeaciones ajenas
-    planeacion = get_object_or_404(PlaneacionClaseGaide, pk=pk, autor=request.user)
-    
-    # Si el docente envía una observación para refinar
+    planeacion = get_object_or_404(
+        PlaneacionClaseGaide,
+        pk=pk,
+        autor=request.user
+    )
+
     if request.method == 'POST' and not planeacion.planeacion_finalizada:
         observacion = request.POST.get('observacion')
+
         if observacion:
-            # Limpiamos el contenido actual para que el frontend detecte "cargando"
-            planeacion.contenido_generado = None
-            planeacion.save()
-
-            prompt_refinar = (
-                f"Toma la estructura anterior y aplica estos refinamientos: {observacion}. "
-                "Mantén el formato de estructura pedagógica."
-            )
-
             threading.Thread(
-                target=ia_service.procesar_flujo, 
-                args=(planeacion.id, prompt_refinar, "refinar")
+                target=ia_service.procesar_flujo,
+                args=(planeacion.id, observacion, "refinar")
             ).start()
-            
+
             return JsonResponse({'status': 'procesando'})
 
-    return render(request, 'planeacion_de_clases_pags/refinamientos_pag.html', {'planeacion': planeacion})
+    return render(
+        request,
+        'planeacion_de_clases_pags/refinamientos_pag.html',
+        {'planeacion': planeacion}
+    )
+
 
 @login_required
 def generar_planeacion_final(request, pk):
     """
-    Paso 3: Transforma la estructura aprobada en una planeación de clase completa.
+    Paso 3: Genera la planeacion completa
     """
-    planeacion = get_object_or_404(PlaneacionClaseGaide, pk=pk, autor=request.user)
-    
+    planeacion = get_object_or_404(
+        PlaneacionClaseGaide,
+        pk=pk,
+        autor=request.user
+    )
+
     if request.method == 'POST':
-        # Limpiamos para el estado de carga
-        planeacion.contenido_generado = None
-        planeacion.save()
-
-        prompt_final = (
-            f"Basado en esta estructura aprobada: {planeacion.contenido_generado}. "
-            "Desarrolla ahora la planeación de clase completa, incluyendo actividades "
-            "detalladas, tiempos, recursos y criterios de evaluación."
-        )
-
         threading.Thread(
-            target=ia_service.procesar_flujo, 
-            args=(planeacion.id, prompt_final, "final")
+            target=ia_service.procesar_flujo,
+            args=(planeacion.id, "", "final")
         ).start()
 
-        return JsonResponse({'status': 'generando_contenido_final'})
+        return JsonResponse({'status': 'generando_final'})
 
     return redirect('refinamientos_view', pk=pk)
+
+
 
 @login_required
 def verificar_estado_ia(request, pk):
     """
-    Endpoint para que AJAX verifique si la IA terminó.
+    Endpoint AJAX para verificar si la IA terminó
     """
-    planeacion = get_object_or_404(PlaneacionClaseGaide, pk=pk, autor=request.user)
-    contenido = planeacion.contenido_generado
-    
+    planeacion = get_object_or_404(
+        PlaneacionClaseGaide,
+        pk=pk,
+        autor=request.user
+    )
+
+    contenido = planeacion.contenido_generado or ""
+
     return JsonResponse({
         'finalizado': bool(contenido),
-        'contenido': contenido if contenido else "",
-        'error': "ERROR_IA" in (contenido or ""),
+        'contenido': contenido,
+        'error': contenido.startswith("ERROR_IA"),
         'es_final': planeacion.planeacion_finalizada
     })
+
+@login_required
+def cambiar_estado_publicacion(request, pk):
+    """
+    Maneja:
+    - Finalizar sin publicar
+    - Finalizar y publicar
+    - Publicar (si ya estaba finalizada)
+    - Quitar publicacion (si ya estaba publicada)
+    """
+    if request.method != 'POST':
+        return redirect('refinamientos_view', pk=pk)
+
+    planeacion = get_object_or_404(
+        PlaneacionClaseGaide,
+        pk=pk,
+        autor=request.user
+    )
+
+    accion = request.POST.get('accion')
+
+    # ===============================
+    # CASO 1: NO ESTA FINALIZADA
+    # ===============================
+    if not planeacion.planeacion_finalizada:
+        planeacion.planeacion_finalizada = True
+
+        if accion == "finalizar_publicar":
+            planeacion.publicada = True
+            messages.success(
+                request,
+                "La planeacion fue finalizada y publicada correctamente."
+            )
+        else:
+            planeacion.publicada = False
+            messages.success(
+                request,
+                "La planeacion fue finalizada correctamente (no publicada)."
+            )
+
+    # ===============================
+    # CASO 2: YA ESTA FINALIZADA
+    # ===============================
+    else:
+        if accion == "publicar":
+            planeacion.publicada = True
+            messages.success(
+                request,
+                "La planeacion fue publicada correctamente."
+            )
+
+        elif accion == "quitar_publicacion":
+            planeacion.publicada = False
+            messages.success(
+                request,
+                "La planeacion fue retirada de publicacion."
+            )
+
+    planeacion.save()
+    return redirect('refinamientos_view', pk=pk)

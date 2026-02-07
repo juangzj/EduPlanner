@@ -5,7 +5,7 @@ from django.db import connection
 
 class GaideIAService:
     """
-    Servicio de comunicacion con OpenAI para el flujo GAIDE.
+    Servicio de comunicacion con OpenAI para el flujo GAIDE
     """
 
     def __init__(self):
@@ -47,20 +47,17 @@ class GaideIAService:
 
                 user_prompt = (
                     "Tu tarea es crear únicamente la estructura de una clase, sin desarrollar contenidos.\n"
-                    "Debes presentar secciones claras, tipos de actividades y tipos de recursos, "
-                    "pero no escribir actividades completas ni explicaciones largas.\n\n"
-                    "Respeta estrictamente estas reglas:\n\n"
+                    "Debes presentar secciones claras, tipos de actividades y tipos de recursos.\n\n"
+                    "Reglas estrictas:\n"
                     "- No desarrolles contenidos\n"
                     "- No expliques conceptos\n"
-                    "- No escribas ejemplos extensos\n"
-                    "- Solo entrega la estructura organizada\n\n"
-                    "Usa el siguiente contexto:\n\n"
+                    "- Solo entrega la estructura\n\n"
                     f"Grado: {planeacion.grado}\n"
                     f"Área: {planeacion.area}\n"
                     f"Tema: {planeacion.tema}\n"
                     f"Competencia: {planeacion.competencia}\n"
-                    f"Objetivos de aprendizaje: {planeacion.objetivo_aprendizaje}\n"
-                    f"Duración de la clase: {planeacion.duracion_clase}\n"
+                    f"Objetivos: {planeacion.objetivo_aprendizaje}\n"
+                    f"Duración: {planeacion.duracion_clase}\n"
                     f"Nivel del grupo: {planeacion.nivel_grupo}\n"
                     f"Información adicional: {planeacion.informacion_adicional or 'N/A'}"
                 )
@@ -68,7 +65,7 @@ class GaideIAService:
                 temp = 0.4
 
             # =========================
-            # MODO: REFINAR ESTRUCTURA
+            # MODO: REFINAR
             # =========================
             elif modo == "refinar":
                 system_msg = (
@@ -76,18 +73,16 @@ class GaideIAService:
                 )
 
                 user_prompt = (
-                    "Debes ajustar la estructura existente según la observación del docente.\n\n"
+                    "Ajusta la siguiente estructura según la observación del docente.\n\n"
                     f"ESTRUCTURA ACTUAL:\n{contenido_previo}\n\n"
-                    f"OBSERVACIÓN DEL DOCENTE:\n{prompt_usuario}\n\n"
-                    "INSTRUCCIÓN:\n"
-                    "Reescribe la estructura completa aplicando los cambios solicitados. "
-                    "No desarrolles contenidos ni explicaciones."
+                    f"OBSERVACIÓN:\n{prompt_usuario}\n\n"
+                    "Reescribe la estructura completa sin desarrollar contenidos."
                 )
 
                 temp = 0.3
 
             # =========================
-            # MODO: DESARROLLO FINAL
+            # MODO: FINAL
             # =========================
             elif modo == "final":
                 system_msg = (
@@ -95,17 +90,13 @@ class GaideIAService:
                 )
 
                 user_prompt = (
-                    "A partir de la siguiente estructura de clase, debes desarrollar la clase completa, "
-                    "creando actividades claras, coherentes y aplicables al aula real.\n\n"
-                    "Reglas obligatorias:\n\n"
-                    "- Respeta exactamente la estructura entregada\n"
-                    "- No cambies los títulos ni el orden de las secciones\n"
-                    "- Desarrolla actividades paso a paso\n"
-                    "- Incluye tiempos aproximados por actividad\n"
-                    "- Usa lenguaje claro para docentes\n"
-                    "- Adapta las actividades al contexto de educación media\n\n"
-                    "Entrada base:\n\n"
-                    f"{contenido_previo}"
+                    "A partir de la siguiente estructura aprobada, desarrolla la clase completa.\n\n"
+                    "Reglas:\n"
+                    "- Respeta títulos y orden\n"
+                    "- Incluye actividades paso a paso\n"
+                    "- Incluye tiempos\n"
+                    "- Lenguaje docente\n\n"
+                    f"ESTRUCTURA BASE:\n{contenido_previo}"
                 )
 
                 temp = 0.7
@@ -117,7 +108,7 @@ class GaideIAService:
             # LLAMADA A IA
             # =========================
             resultado = self._generar_completion(
-                system_msg=system_msg,
+                system_prompt=system_msg,
                 user_prompt=user_prompt,
                 temperature=temp
             )

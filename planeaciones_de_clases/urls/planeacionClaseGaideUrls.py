@@ -29,5 +29,10 @@ urlpatterns = [
         planeacionClaseGaideViews.verificar_estado_ia, 
         name="verificar_estado_ia"
     ),
+    path(
+    "cambiar-publicacion/<int:pk>/", 
+    planeacionClaseGaideViews.cambiar_estado_publicacion, 
+    name="cambiar_estado_publicacion"
+),
   
 ]   
