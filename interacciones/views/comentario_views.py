@@ -21,4 +21,4 @@ def agregar_comentario(request, pk):
         else:
             messages.error(request, "El comentario no puede estar vacío.")
             
-    return redirect('interacciones_pags/foro_planeacion_detalle/', pk=pk)
+    return redirect('foro_planeacion_detalle', pk=pk)

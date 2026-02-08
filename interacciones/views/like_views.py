@@ -16,4 +16,4 @@ def toggle_like(request, pk):
     else:
         LikePlaneacion.objects.create(planeacion=planeacion, usuario=request.user)
         
-    return redirect('interacciones_pags/foro_planeacion_detalle/', pk=pk)
+    return redirect('foro_planeacion_detalle', pk=pk)

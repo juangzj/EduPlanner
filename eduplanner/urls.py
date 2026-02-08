@@ -17,9 +17,11 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from .views import landing_page_view
 
 
 urlpatterns = [
+    path("", landing_page_view, name="landing"),
     path("admin/", admin.site.urls),
     path("eduplanner/", include("usuario.urls")),
     path("eduplanner/planeaciones/", include("planeaciones_de_clases.urls")),
