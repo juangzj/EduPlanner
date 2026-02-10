@@ -5,6 +5,7 @@ from django.contrib import messages
 from ..forms.acceso_form import FormularioAcceso
 from planeaciones_de_clases.models import PlaneacionClaseGaide
 from django.db.models import Count
+from django.contrib.auth import logout
 
 
 def inicio_de_sesion(request):
@@ -57,3 +58,10 @@ def pagina_inicio_view(request):
     }
     
     return render(request, "inicio_pag.html", context)
+
+
+@login_required
+def cerrar_sesion(request):
+    logout(request)
+    #messages.success(request, "Sesion cerrada correctamente")
+    return redirect("landing")

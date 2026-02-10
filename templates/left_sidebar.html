@@ -21,8 +21,11 @@
     <a href="{% url 'biblioteca' %}" class="nav-link text-white hover-effect">
       <i class="bi bi-bookmarks me-2"></i> Mi biblioteca
     </a>
-    <a href="#" class="nav-link text-white hover-effect">
+    <a href="{% url 'editar_perfil' %}" class="nav-link text-white hover-effect">
       <i class="bi bi-gear me-2"></i> Configuración
+    </a>
+    <a href="{% url 'cerrar_sesion' %}" class="nav-link text-red hover-effect">
+      <i class="bi bi-gear me-2"></i> Cerrar Sesion
     </a>
   </nav>
 

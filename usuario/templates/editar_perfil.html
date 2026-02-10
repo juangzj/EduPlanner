@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Perfil | EduPlanner{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="d-flex align-items-center mb-4">
+                <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm me-3">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <h2 class="h4 mb-0">Configuración del Perfil</h2>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title mb-0 text-primary">Información Personal</h5>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+
+                        <div class="alert alert-light border mb-4 d-flex align-items-center">
+                            <i class="bi bi-info-circle-fill text-primary me-2"></i>
+                            <small class="text-muted">
+                                Tu correo electrónico <strong>{{ request.user.gmail }}</strong> está vinculado a tu cuenta institucional y no puede ser modificado.
+                            </small>
+                        </div>
+
+                        <div class="row g-3">
+                            {% for field in form %}
+                                {% if field.name == "gmail" %}
+                                    {# Campo oculto para procesar el formulario correctamente #}
+                                    {{ field.as_hidden }}
+                                {% else %}
+                                    <div class="col-md-6">
+                                        <label for="{{ field.id_for_label }}" class="form-label fw-bold small text-secondary">
+                                            {{ field.label }}
+                                        </label>
+                                        
+                                        <input 
+                                            type="{{ field.field.widget.input_type|default:'text' }}" 
+                                            name="{{ field.name }}" 
+                                            id="{{ field.id_for_label }}"
+                                            class="form-control {% if field.errors %}is-invalid{% endif %}"
+                                            {# Lógica corregida: default:'' asegura que se muestre el input vacío si el valor es None #}
+                                            value="{% if field.name == 'fecha_nacimiento' %}{{ field.value|date:'Y-m-d' }}{% else %}{{ field.value|default:'' }}{% endif %}"
+                                            {% if field.field.required %}required{% endif %}
+                                        >
+
+                                        {% if field.help_text %}
+                                            <div class="form-text small text-muted">{{ field.help_text }}</div>
+                                        {% endif %}
+
+                                        {% if field.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in field.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <hr class="my-4 text-muted">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{% url 'editar_perfil' %}" class="btn btn-light px-4">Descartar cambios</a>
+                            <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                                <i class="bi bi-check-lg me-1"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-4 border-0 shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1">Seguridad de la cuenta</h6>
+                        <p class="text-muted small mb-0">¿Deseas actualizar tu contraseña de acceso?</p>
+                    </div>
+                    <a href="#" class="btn btn-outline-primary btn-sm">Cambiar contraseña</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus {
+        border-color: #3f51b5;
+        box-shadow: 0 0 0 0.25rem rgba(63, 81, 181, 0.1);
+    }
+    .card {
+        border-radius: 12px;
+    }
+    .btn-primary {
+        background-color: #3f51b5;
+        border-color: #3f51b5;
+    }
+    .btn-primary:hover {
+        background-color: #1a1a40;
+        border-color: #1a1a40;
+    }
+    /* Estilo para los labels de campos opcionales */
+    .form-label {
+        margin-bottom: 0.4rem;
+    }
+</style>
+{% endblock %}
